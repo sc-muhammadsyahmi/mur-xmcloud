@@ -1,13 +1,8 @@
-import { Text, RichText, Field, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
-import { ComponentProps } from 'lib/component-props';
-import { JSX } from 'react';
+'use client';
 
-type ContentBlockProps = ComponentProps & {
-  fields: {
-    heading: Field<string>;
-    content: Field<string>;
-  };
-};
+import { Text, RichText, Field, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
+import { JSX } from 'react';
+import type { ContentBlockProps } from './sxa-content-block.props';
 
 /**
  * A simple Content Block component, with a heading and rich text block.

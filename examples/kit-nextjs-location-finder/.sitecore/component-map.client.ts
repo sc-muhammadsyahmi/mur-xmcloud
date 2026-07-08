@@ -16,8 +16,11 @@ import * as TextBanner02dev from 'src/components/text-banner/TextBanner02.dev';
 import * as TextBanner01dev from 'src/components/text-banner/TextBanner01.dev';
 import * as TextBanner from 'src/components/text-banner/TextBanner';
 import * as TestimonialCarousel from 'src/components/testimonial-carousel/TestimonialCarousel';
-import * as Navigation from 'src/components/sxa/Navigation';
+import * as NavigationMenuToggleclient from 'src/components/sxa/NavigationMenuToggle.client';
+import * as NavigationListclient from 'src/components/sxa/NavigationList.client';
 import * as LinkList from 'src/components/sxa/LinkList';
+import * as ContentBlock from 'src/components/sxa/ContentBlock';
+import * as ButtonNavigationclient from 'src/components/sxa/ButtonNavigation.client';
 import * as SubscriptionBanner from 'src/components/subscription-banner/SubscriptionBanner';
 import * as SubmissionFormDefaultdev from 'src/components/submission-form/SubmissionFormDefault.dev';
 import * as SubmissionFormCentereddev from 'src/components/submission-form/SubmissionFormCentered.dev';
@@ -33,7 +36,6 @@ import * as ProductListingSliderdev from 'src/components/product-listing/Product
 import * as ProductListingDefaultdev from 'src/components/product-listing/ProductListingDefault.dev';
 import * as ProductListingCarddev from 'src/components/product-listing/ProductListingCard.dev';
 import * as ProductListing from 'src/components/product-listing/ProductListing';
-import * as portaldev from 'src/components/portal/portal.dev';
 import * as PageHeaderFiftyFiftydev from 'src/components/page-header/PageHeaderFiftyFifty.dev';
 import * as PageHeaderDefaultdev from 'src/components/page-header/PageHeaderDefault.dev';
 import * as PageHeaderCentereddev from 'src/components/page-header/PageHeaderCentered.dev';
@@ -44,7 +46,6 @@ import * as MultiPromoTabs from 'src/components/multi-promo-tabs/MultiPromoTabs'
 import * as MultiPromo from 'src/components/multi-promo/MultiPromo';
 import * as modetoggledev from 'src/components/mode-toggle/mode-toggle.dev';
 import * as MediaSectiondev from 'src/components/media-section/MediaSection.dev';
-import * as meteors from 'src/components/magicui/meteors';
 import * as LogoTabs from 'src/components/logo-tabs/LogoTabs';
 import * as LocationSearchTitleZipCentereddev from 'src/components/location-search/LocationSearchTitleZipCentered.dev';
 import * as LocationSearchMapTopAllCentereddev from 'src/components/location-search/LocationSearchMapTopAllCentered.dev';
@@ -68,6 +69,7 @@ import * as ImageCarouselFeaturedImageLeftdev from 'src/components/image-carouse
 import * as ImageCarouselEditModedev from 'src/components/image-carousel/ImageCarouselEditMode.dev';
 import * as ImageCarouselDefaultdev from 'src/components/image-carousel/ImageCarouselDefault.dev';
 import * as ImageCarousel from 'src/components/image-carousel/ImageCarousel';
+import * as ImageWrapperclient from 'src/components/image/ImageWrapper.client';
 import * as Icon from 'src/components/icon/Icon';
 import * as HeroImageRightdev from 'src/components/hero/HeroImageRight.dev';
 import * as HeroImageBottomInsetdev from 'src/components/hero/HeroImageBottomInset.dev';
@@ -89,7 +91,6 @@ import * as FooterNavigationColumn from 'src/components/global-footer/FooterNavi
 import * as ZipcodeSearchFormdev from 'src/components/forms/zipcode/ZipcodeSearchForm.dev';
 import * as SubmitInfoFormdev from 'src/components/forms/submitinfo/SubmitInfoForm.dev';
 import * as EmailSignupFormdev from 'src/components/forms/email/EmailSignupForm.dev';
-import * as floatingdockdev from 'src/components/floating-dock/floating-dock.dev';
 import * as Carousel from 'src/components/carousel/Carousel';
 import * as cardspotlightdev from 'src/components/card-spotlight/card-spotlight.dev';
 import * as ArticleHeader from 'src/components/article-header/ArticleHeader';
@@ -116,8 +117,11 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['TextBanner01', { ...TextBanner01dev }],
   ['TextBanner', { ...TextBanner }],
   ['TestimonialCarousel', { ...TestimonialCarousel }],
-  ['Navigation', { ...Navigation }],
+  ['NavigationMenuToggle', { ...NavigationMenuToggleclient }],
+  ['NavigationList', { ...NavigationListclient }],
   ['LinkList', { ...LinkList }],
+  ['ContentBlock', { ...ContentBlock }],
+  ['ButtonNavigation', { ...ButtonNavigationclient }],
   ['SubscriptionBanner', { ...SubscriptionBanner }],
   ['SubmissionFormDefault', { ...SubmissionFormDefaultdev }],
   ['SubmissionFormCentered', { ...SubmissionFormCentereddev }],
@@ -133,7 +137,6 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['ProductListingDefault', { ...ProductListingDefaultdev }],
   ['ProductListingCard', { ...ProductListingCarddev }],
   ['ProductListing', { ...ProductListing }],
-  ['portal', { ...portaldev }],
   ['PageHeaderFiftyFifty', { ...PageHeaderFiftyFiftydev }],
   ['PageHeaderDefault', { ...PageHeaderDefaultdev }],
   ['PageHeaderCentered', { ...PageHeaderCentereddev }],
@@ -144,7 +147,6 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['MultiPromo', { ...MultiPromo }],
   ['mode-toggle', { ...modetoggledev }],
   ['MediaSection', { ...MediaSectiondev }],
-  ['meteors', { ...meteors }],
   ['LogoTabs', { ...LogoTabs }],
   ['LocationSearchTitleZipCentered', { ...LocationSearchTitleZipCentereddev }],
   ['LocationSearchMapTopAllCentered', { ...LocationSearchMapTopAllCentereddev }],
@@ -167,6 +169,7 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['ImageCarouselEditMode', { ...ImageCarouselEditModedev }],
   ['ImageCarouselDefault', { ...ImageCarouselDefaultdev }],
   ['ImageCarousel', { ...ImageCarousel }],
+  ['ImageWrapper', { ...ImageWrapperclient }],
   ['Icon', { ...Icon }],
   ['HeroImageRight', { ...HeroImageRightdev }],
   ['HeroImageBottomInset', { ...HeroImageBottomInsetdev }],
@@ -187,7 +190,6 @@ export const componentMap = new Map<string, NextjsContentSdkComponent>([
   ['ZipcodeSearchForm', { ...ZipcodeSearchFormdev }],
   ['SubmitInfoForm', { ...SubmitInfoFormdev }],
   ['EmailSignupForm', { ...EmailSignupFormdev }],
-  ['floating-dock', { ...floatingdockdev }],
   ['Carousel', { ...Carousel }],
   ['card-spotlight', { ...cardspotlightdev }],
   ['ArticleHeader', { ...ArticleHeader }],

@@ -4,9 +4,9 @@ import type React from 'react';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Link as ContentSdkLink } from '@sitecore-content-sdk/nextjs';
+import { CompatibleLink } from '@/components/content-sdk/CompatibleLink';
 import { Menu } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   NavigationMenu,
@@ -60,7 +60,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
 
   return (
     <AnimatePresence mode="wait" data-component="GlobalHeader">
-      <motion.header
+      <m.header
         initial={{ opacity: 1 }}
         animate={{ opacity: visible ? 1 : 0 }}
         transition={{ duration: isReducedMotion ? 0 : 0.2 }}
@@ -93,7 +93,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
             </div>
           </div>
           {/* Desktop Navigation */}
-          <div className="@lg:flex @lg:flex-[2] hidden" ref={navRef}>
+          <nav className="@lg:flex @lg:flex-[2] hidden" ref={navRef} aria-label="Primary navigation">
             <NavigationMenu className="w-full">
               <div className="relative w-full">
                 <AnimatedHoverNav
@@ -108,29 +108,18 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                         <NavigationMenuItem
                           key={`${item.link?.jsonValue?.value?.text}-${index}`}
                         >
-                          {isPageEditing ? (
+                          {item.link?.jsonValue && (isPageEditing || item.link.jsonValue?.value?.href) && (
                             <Button
                               variant="ghost"
                               asChild
                               className="font-body bg-transparent text-base font-medium hover:bg-transparent"
                             >
-                              <ContentSdkLink field={item.link?.jsonValue} />
+                              <CompatibleLink
+                                field={item.link?.jsonValue}
+                                editable={isPageEditing}
+                                prefetch={false}
+                              />
                             </Button>
-                          ) : (
-                            item.link?.jsonValue?.value?.href && (
-                              <Button
-                                variant="ghost"
-                                asChild
-                                className="font-body bg-transparent text-base font-medium hover:bg-transparent"
-                              >
-                                <Link
-                                  href={item.link.jsonValue.value.href}
-                                  prefetch={false}
-                                >
-                                  {item.link.jsonValue.value.text}
-                                </Link>
-                              </Button>
-                            )
                           )}
                         </NavigationMenuItem>
                       ))}
@@ -138,29 +127,17 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                 </AnimatedHoverNav>
               </div>
             </NavigationMenu>
-          </div>
+          </nav>
           {/* Desktop CTA */}
           {headerContact?.jsonValue?.value && (
             <div className="@lg:flex @lg:items-center @lg:justify-end @lg:flex-1 hidden">
-              {isPageEditing ? (
-                <Button asChild className="font-heading text-base font-medium">
-                  <ContentSdkLink field={headerContact.jsonValue} />
-                </Button>
-              ) : (
-                headerContact.jsonValue.value.href && (
-                  <Button
-                    asChild
-                    className="font-heading text-base font-medium"
-                  >
-                    <Link
-                      href={headerContact.jsonValue.value.href}
-                      prefetch={false}
-                    >
-                      {headerContact.jsonValue.value.text}
-                    </Link>
-                  </Button>
-                )
-              )}
+              <Button asChild className="font-heading text-base font-medium">
+                <CompatibleLink
+                  field={headerContact.jsonValue}
+                  editable={isPageEditing}
+                  prefetch={false}
+                />
+              </Button>
             </div>
           )}
           {/* Mobile Navigation */}
@@ -168,7 +145,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <AnimatePresence>
                 {isOpen && (
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -191,7 +168,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                 side="bottom"
                 className="bg-background/60 h-[100dvh] border-t-0 p-0 backdrop-blur-md [&>button_svg]:size-8"
               >
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -204,7 +181,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                 >
                   <AnimatePresence>
                     {sheetAnimationComplete && (
-                      <motion.nav
+                      <m.nav
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="flex flex-col space-y-4"
@@ -213,7 +190,7 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                           primaryNavigationLinks.targetItems.length > 0 &&
                           primaryNavigationLinks?.targetItems.map(
                             (item, index) => (
-                              <motion.div
+                              <m.div
                                 key={`${item.link?.jsonValue?.value?.text}-mobile`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -223,36 +200,22 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                                 }}
                                 className="flex justify-center"
                               >
-                                {isPageEditing ? (
-                                  <Button
-                                    variant="ghost"
-                                    asChild
-                                    onClick={() => setIsOpen(false)}
-                                  >
-                                    <ContentSdkLink
-                                      field={item.link?.jsonValue}
-                                    />
-                                  </Button>
-                                ) : (
-                                  item.link?.jsonValue?.value?.href && (
-                                    <Button
-                                      variant="ghost"
-                                      asChild
-                                      onClick={() => setIsOpen(false)}
-                                    >
-                                      <Link
-                                        href={item.link.jsonValue.value.href}
-                                      >
-                                        {item.link.jsonValue.value.text}
-                                      </Link>
-                                    </Button>
-                                  )
-                                )}
-                              </motion.div>
+                                <Button
+                                  variant="ghost"
+                                  asChild
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  <CompatibleLink
+                                    field={item.link?.jsonValue}
+                                    editable={isPageEditing}
+                                    prefetch={false}
+                                  />
+                                </Button>
+                              </m.div>
                             ),
                           )}
                         {headerContact?.jsonValue?.value && (
-                          <motion.div
+                          <m.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
@@ -264,37 +227,24 @@ export const GlobalHeaderDefault: React.FC<GlobalHeaderProps> = (props) => {
                             }}
                             className="flex justify-center"
                           >
-                            {isPageEditing ? (
-                              <Button asChild onClick={() => setIsOpen(false)}>
-                                <ContentSdkLink
-                                  field={headerContact.jsonValue}
-                                />
-                              </Button>
-                            ) : (
-                              headerContact.jsonValue.value.href && (
-                                <Button
-                                  asChild
-                                  onClick={() => setIsOpen(false)}
-                                >
-                                  <Link
-                                    href={headerContact.jsonValue.value.href}
-                                  >
-                                    {headerContact.jsonValue.value.text}
-                                  </Link>
-                                </Button>
-                              )
-                            )}
-                          </motion.div>
+                            <Button asChild onClick={() => setIsOpen(false)}>
+                              <CompatibleLink
+                                field={headerContact.jsonValue}
+                                editable={isPageEditing}
+                                prefetch={false}
+                              />
+                            </Button>
+                          </m.div>
                         )}
-                      </motion.nav>
+                      </m.nav>
                     )}
                   </AnimatePresence>
-                </motion.div>
+                </m.div>
               </SheetContent>
             </Sheet>
           </div>
         </div>
-      </motion.header>
+      </m.header>
     </AnimatePresence>
   );
 };

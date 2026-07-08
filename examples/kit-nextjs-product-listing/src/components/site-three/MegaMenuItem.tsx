@@ -2,35 +2,14 @@ import {
   Text as ContentSdkText,
   Link as ContentSdkLink,
   NextImage as ContentSdkImage,
-  LinkField,
-  Field,
-  ImageField,
   AppPlaceholder,
 } from '@sitecore-content-sdk/nextjs';
-import { ComponentProps } from 'lib/component-props';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import componentMap from '.sitecore/component-map';
 import { MegaMenuToggle, MegaMenuContent, MegaMenuBackButton } from './MegaMenuItemWrapper';
-
-interface Fields {
-  Title: Field<string>;
-  Link: LinkField;
-  FeaturedProduct: {
-    id: string;
-    url: string;
-    fields: {
-      ProductName: Field<string>;
-      FeaturedImage: ImageField;
-    };
-  };
-}
-
-type MegaMenuItemProps = ComponentProps & {
-  params: { [key: string]: string };
-  fields: Fields;
-};
+import type { MegaMenuItemProps } from './mega-menu-item.props';
 
 const DICTIONARY_KEYS = {
   EXPLORE_BUTTON_LABEL: 'Explore',
@@ -108,9 +87,9 @@ export const Default = (props: MegaMenuItemProps) => {
                 />
               </div>
               <div className="absolute bottom-0 lg:bottom-8 left-0 p-4 text-center bg-background shadow-lg">
-                <h5 className="mb-4 text-sm">
+                <h3 className="mb-4 text-sm">
                   <ContentSdkText field={featuredProduct.fields.ProductName} />
-                </h5>
+                </h3>
                 <Link href={featuredProduct.url} className="btn btn-primary btn-sharp">
                   {t(DICTIONARY_KEYS.EXPLORE_BUTTON_LABEL) || 'Explore'}
                   {featuredProduct.fields.ProductName?.value}

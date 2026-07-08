@@ -1,6 +1,21 @@
 # Project Context
 
-### Repository Overview
+## Table of Contents
+
+- [Repository Overview](#repository-overview)
+- [Technology Stack](#technology-stack)
+- [Development Principles](#development-principles)
+- [Upstream, forks, and pull request scope](#upstream-forks-and-pull-request-scope)
+- [Constraints and Guidelines](#constraints-and-guidelines)
+- [Code Style](#code-style)
+- [General Coding Principles](#general-coding-principles)
+- [JavaScript/TypeScript Rules](#javascripttypescript-rules)
+- [Sitecore XM Cloud Rules](#sitecore-xm-cloud-rules)
+- [Next.js Development Patterns](#nextjs-development-patterns)
+- [Testing Patterns](#testing-patterns)
+- [Safety Rules](#safety-rules)
+
+## Repository Overview
 
 This is the **XM Cloud Front End Application Starter Kits** repository containing multiple Next.js starter applications and SPA examples for Sitecore XM Cloud development.
 
@@ -24,10 +39,10 @@ Each starter demonstrates:
 - Modular component architecture with variants
 - Localization support for English (en) and Canadian English (en-CA)
 
-### Technology Stack
+## Technology Stack
 
 **Core Technologies:**
-- **Next.js 14+** - React framework with App Router and Pages Router support
+- **Next.js 14+** - React framework with App Router (all starters except `basic-nextjs-pages-router`)
 - **TypeScript** - Strict type safety throughout all components
 - **Sitecore XM Cloud** - Headless content management and delivery
 - **Sitecore Content SDK** - Modern SDK for XM Cloud integration
@@ -45,7 +60,7 @@ Each starter demonstrates:
 - **Node.js LTS** - JavaScript runtime environment
 - **npm** - Package management across all starter applications
 
-### Development Principles
+## Development Principles
 
 **Multi-Starter Architecture:**
 - Each example is a standalone application
@@ -59,7 +74,17 @@ Each starter demonstrates:
 - Support for both connected and disconnected development modes
 - Proper handling of content authoring scenarios
 
-### Constraints and Guidelines
+## Upstream, forks, and pull request scope
+
+The official **upstream** repository (this project’s public GitHub home) keeps a **small, fixed** set of starters in `examples/` as **reference examples**, not a catalog of every vertical. Before treating work as an **upstream pull request**, confirm whether the target is **upstream** or a **user fork** / **template** copy.
+
+- **Fits upstream PRs:** **Improvements, bug fixes, and broadly useful features** in **existing** starters; **documentation** and **tooling** aligned with the repo’s contribution policy.
+- **Not for upstream PRs:** **New example sites**, **additional** starters, or **product-specific** extensions for one org that should live in a **fork** or separate repo. Use **Use this template** or maintain a **fork** for that work.
+- **Fork or standalone copy:** Add starters and customize freely; do not frame that work as an official upstream change unless maintainers have agreed otherwise.
+
+Authoritative human policy: **[CONTRIBUTING.md](CONTRIBUTING.md)** — especially **[What we do not accept](CONTRIBUTING.md#what-we-do-not-accept)**. For Cursor, see **`.cursor/rules/project-context.mdc`**.
+
+## Constraints and Guidelines
 
 **File Organization:**
 - Each starter maintains its own `src/` directory structure
@@ -146,7 +171,6 @@ npm run dev
 **Readability:**
 - Use descriptive variable and function names
 - Keep functions small and focused (single responsibility)
-- Add JSDoc comments for complex business logic
 - Prefer self-documenting code over extensive comments
 - Use consistent naming patterns across all starters
 
@@ -435,10 +459,14 @@ src/
 
 **File Organization:**
 - Component directories contain main file, variants, and props
-- Main component file should contain variants and props following the Locality of Behavior pattern
+- Main component file should contain variants and rendering logic; keep props/interfaces in sidecar files (`*.props.ts` / `*.props.tsx`)
 - Using `.dev.tsx` files for variant implementations is discouraged unless maintainability becomes dificult for the componenent and seperation can not be avoided
 - Shared utilities in dedicated directories
 - Group UI components in `ui/` subdirectory
+- Exclude sidecar props files from component-map generation in each starter `sitecore.cli.config.ts` via `componentMap.exclude`:
+  - `src/components/**/*.props.ts`
+  - `src/components/**/*.props.tsx`
+- After adding or renaming sidecar props files, regenerate maps with `npm run sitecore-tools:generate-map` and verify `.sitecore/component-map.ts` has no props-sidecar registrations.
 
 ### Error Handling
 
@@ -514,12 +542,6 @@ requiredEnvVars.forEach(envVar => {
 
 ### Documentation
 
-**JSDoc Comments:**
-- All new functions, interfaces, classes must have JSDoc style comments
-- Include @param tags for all parameters with types and descriptions
-- Include @returns tag for return values with type and description
-- Use descriptive comments that explain the purpose and behavior
-
 **Import Patterns:**
 - Use `type` imports for TypeScript types: `import type React from 'react'`
 - Import Sitecore components: `import { Text, RichText, Image, useSitecore } from '@sitecore-content-sdk/nextjs'`
@@ -539,21 +561,6 @@ import { ComponentProps } from '@/lib/component-props';
 import { NoDataFallback } from '@/utils/NoDataFallback';
 import { Default as ImageWrapper } from '@/components/image/ImageWrapper.dev';
 import { ButtonBase } from '@/components/button-component/ButtonComponent';
-
-/**
- * Hero component for displaying prominent content on XM Cloud pages
- * @param {HeroProps} props - Component props from XM Cloud datasource
- * @returns {JSX.Element} The rendered hero component with variants support
- */
-export const HeroDefault: React.FC<HeroProps> = (props) => {
-  const { fields, isPageEditing } = props;
-  
-  if (!fields?.data?.datasource) {
-    return <NoDataFallback componentName="Hero" />;
-  }
-  
-  // Component implementation
-};
 ```
 
 ## Sitecore XM Cloud Rules
@@ -922,96 +929,46 @@ const nextConfig = {
 - Use different .env files for different environments
 - Never commit sensitive environment variables
 
-### Pages and Routing
+### App Router Pages and Routing
 
 **Catch-All Routes:**
-- Use `[...path].tsx` for XM Cloud page routing
-- Handle both single and multi-segment paths
-- Implement proper 404 handling for non-existent items
-- Support preview mode for content authors
+- Use `src/app/[site]/[locale]/[[...path]]/page.tsx` for XM Cloud page routing
+- Fetch layout data in the Server Component with `sitecore-client`
+- Call `notFound()` when the route does not exist
+- Use `draftMode()` and editing search params for preview and Pages Editor
 
-```typescript
-// [...path].tsx pattern
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const path = Array.isArray(context.params?.path) 
-    ? context.params.path.join('/')
-    : context.params?.path || '/';
-    
-  const locale = context.locale || 'en';
-  
-  try {
-    const layoutData = await layoutService.getRouteData(path, locale);
-    
-    if (!layoutData.sitecore.route) {
-      return { notFound: true };
-    }
-    
-    return { 
-      props: { 
-        layoutData,
-        notFound: false 
-      } 
-    };
-  } catch (error) {
-    console.error(`Error fetching route data for ${path}:`, error);
-    return { notFound: true };
-  }
-}
-```
-
-**Static Generation:**
-- Use ISR (Incremental Static Regeneration) for XM Cloud content
-- Implement proper revalidation strategies
-- Handle dynamic paths with getStaticPaths
-- Consider build time vs. runtime performance trade-offs
+**Pages Router:**
+- Only `examples/basic-nextjs-pages-router` uses `src/pages/[[...path]].tsx` with `getStaticProps` / `getServerSideProps`
 
 ### API Routes
 
 **XM Cloud Integration:**
-- Create API routes for XM Cloud services
+- Implement route handlers under `src/app/api/**/route.ts`
+- Use Content SDK `createRobotsRouteHandler` and related route-handler helpers where available
 - Handle authentication and authorization properly
 - Implement proper error handling and logging
-- Cache responses when appropriate
 
 ```typescript
-// api/robots.ts pattern
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  try {
-    const robotsContent = await robotsService.getRobots();
-    
-    res.setHeader('Content-Type', 'text/plain');
-    res.status(200).send(robotsContent);
-  } catch (error) {
-    console.error('Error generating robots.txt:', error);
-    res.status(500).send('Error generating robots.txt');
-  }
+// src/app/api/robots/route.ts pattern
+import { createRobotsRouteHandler } from '@sitecore-content-sdk/nextjs/route-handler';
+
+const { GET: sitecoreGET } = createRobotsRouteHandler({ client, sites });
+
+export async function GET(request: NextRequest) {
+  return sitecoreGET(request);
 }
 ```
 
-### Middleware
+### Proxy (request pipeline)
 
-**XM Cloud Editing:**
-- Handle editing mode detection
-- Implement proper cookie handling for XM Cloud
-- Set up redirects for content authors
-- Support preview mode functionality
+App Router starters use `src/proxy.ts` with Content SDK proxy classes (`LocaleProxy`, `AppRouterMultisiteProxy`, `RedirectsProxy`, `PersonalizeProxy`). Editing and preview are handled in `page.tsx` via `draftMode()` and Content SDK editing APIs.
 
 ```typescript
-// middleware.ts pattern
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // Handle XM Cloud editing mode
-  if (request.cookies.get('sc_mode')?.value === 'edit') {
-    // Redirect to editing host
-    const editingUrl = new URL(pathname, process.env.EDITING_HOST_URL);
-    return NextResponse.redirect(editingUrl);
-  }
-  
-  return NextResponse.next();
+// src/proxy.ts pattern
+import { defineProxy, LocaleProxy, AppRouterMultisiteProxy } from '@sitecore-content-sdk/nextjs/proxy';
+
+export default function proxy(req: NextRequest) {
+  return defineProxy(locale, multisite, redirects, personalize).exec(req);
 }
 ```
 
@@ -1169,20 +1126,15 @@ describe('Hero Component', () => {
 - Test authentication and authorization
 
 ```typescript
-// API route test example
-import { createMocks } from 'node-mocks-http';
-import handler from '../pages/api/robots';
+// API route test example (App Router)
+import { GET } from '@/app/api/robots/route';
 
 describe('/api/robots', () => {
   it('returns robots.txt content', async () => {
-    const { req, res } = createMocks({
-      method: 'GET',
-    });
+    const response = await GET(new Request('http://localhost/api/robots'));
     
-    await handler(req, res);
-    
-    expect(res._getStatusCode()).toBe(200);
-    expect(res._getHeaders()['content-type']).toBe('text/plain');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('text/plain');
   });
 });
 ```

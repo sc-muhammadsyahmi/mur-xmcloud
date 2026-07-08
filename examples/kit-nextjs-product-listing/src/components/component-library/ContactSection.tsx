@@ -5,53 +5,17 @@ import {
   Link as ContentSdkLink,
   RichText as ContentSdkRichText,
   Text as ContentSdkText,
-  Page,
 } from '@sitecore-content-sdk/nextjs';
-import { IGQLImageField, IGQLLinkField, IGQLRichTextField, IGQLTextField } from 'src/types/igql';
 import { Button } from 'shadcd/components/ui/button';
 import { useMemo, useState, type JSX } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ComponentProps } from '@/lib/component-props';
-
-interface Fields {
-  data: {
-    datasource: {
-      children: {
-        results: ContactFields[];
-      };
-      tagLine: IGQLTextField;
-      heading: IGQLTextField;
-      body: IGQLRichTextField;
-      image: IGQLImageField;
-    };
-  };
-}
-
-interface ContactFields {
-  id: string;
-  image: IGQLImageField;
-  heading: IGQLTextField;
-  description: IGQLTextField;
-  contactLink: IGQLLinkField;
-  buttonLink: IGQLLinkField;
-}
-
-type ContactSectionProps = ComponentProps & {
-  fields: Fields;
-};
-
-type ContactCardImageProps = {
-  contact: ContactFields;
-  size: 'xs' | 'sm' | 'md' | 'lg';
-};
-
-type ContactCardProps = {
-  contact: ContactFields;
-  type: 'sm' | 'md' | 'lg' | 'horizontal' | 'noImage';
-  centered?: boolean;
-  page: Page;
-};
+import type {
+  ContactCardImageProps,
+  ContactCardProps,
+  ContactSectionProps,
+} from './contact-section.props';
+import { getDatasource, normalizeFieldShape } from '@/lib/component-props';
 
 const ContactCardImage = (props: ContactCardImageProps) => {
   switch (props.size) {
@@ -222,9 +186,9 @@ export const Default = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
@@ -249,9 +213,9 @@ export const ContactSection1 = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl mx-auto text-center">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
@@ -276,9 +240,9 @@ export const ContactSection2 = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
@@ -314,9 +278,9 @@ export const ContactSection3 = (props: ContactSectionProps): JSX.Element => {
       <div className="container mx-auto">
         <div className="grid md:grid-cols-5 gap-x-12 gap-y-20">
           <div className="max-w-3xl md:col-span-3">
-            <h6 className="font-semibold mb-4">
+            <p className="font-semibold mb-4">
               <ContentSdkText field={datasource.tagLine?.jsonValue} />
-            </h6>
+            </p>
             <h2 className="text-5xl font-bold mb-4">
               <ContentSdkText field={datasource.heading?.jsonValue} />
             </h2>
@@ -348,9 +312,9 @@ export const ContactSection4 = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
@@ -375,9 +339,9 @@ export const ContactSection5 = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl mx-auto text-center">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
@@ -407,9 +371,9 @@ export const ContactSection6 = (props: ContactSectionProps): JSX.Element => {
     <section className={`py-24 px-4 ${props.params.styles}`} data-class-change>
       <div className="container mx-auto">
         <div className="max-w-3xl">
-          <h6 className="font-semibold mb-4">
+          <p className="font-semibold mb-4">
             <ContentSdkText field={datasource.tagLine?.jsonValue} />
-          </h6>
+          </p>
           <h2 className="text-5xl font-bold mb-4">
             <ContentSdkText field={datasource.heading?.jsonValue} />
           </h2>
